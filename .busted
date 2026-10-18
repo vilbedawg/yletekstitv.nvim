@@ -1,0 +1,10 @@
+-- busted runs the specs through nlua, which uses `nvim -l` as the Lua interpreter.
+return {
+    _all = {
+        lua = "nlua",
+        lpath = "lua/?.lua;lua/?/init.lua",
+    },
+    default = {
+        verbose = true,
+    },
+}
