@@ -3,7 +3,7 @@
     "packages": {
         ".": {
             "release-type": "simple",
-            "package-name": "yletekstitv",
+            "package-name": "yletekstitv.nvim",
             "initial-version": "0.1.0",
             "bump-minor-pre-major": true
         }

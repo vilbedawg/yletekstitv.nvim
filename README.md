@@ -1,4 +1,4 @@
-# yletekstitv
+# yletekstitv.nvim
 
 Read [Yle Teksti-TV](https://yle.fi/tekstitv) in Neovim.
 
@@ -6,10 +6,10 @@ Requires Neovim 0.10+ and `curl`.
 
 ```lua
 -- vim.pack (Neovim 0.12+)
-vim.pack.add({ "https://github.com/vilbedawg/yletekstitv" })
+vim.pack.add({ "https://github.com/vilbedawg/yletekstitv.nvim" })
 
 -- lazy.nvim
-{ "vilbedawg/yletekstitv" }
+{ "vilbedawg/yletekstitv.nvim" }
 ```
 
 `:Tekstitv 100` opens a page. Follow links with `gd` / `<C-]>`, move between pages with `]p` / `[p`. See `:h tekstitv`.
