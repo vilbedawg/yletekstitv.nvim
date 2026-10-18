@@ -34,9 +34,20 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: lumen-oss/nvim-busted-action@bbcfe82d35b8fb4660ef6ed4124e1fd9cef4688b # v1.2.0
+      - uses: rhysd/action-setup-vim@febef33995d6649302e9d88dda81e071b68f16a7 # v1.6.1
         with:
-          nvim_version: ${{ matrix.nvim_version }}
+          neovim: true
+          version: ${{ matrix.nvim_version }}
+      - name: Install busted and nlua
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.1 liblua5.1-0-dev luarocks
+          luarocks --local --lua-version 5.1 install busted
+          luarocks --local --lua-version 5.1 install nlua
+      - name: Run tests
+        run: |
+          eval "$(luarocks --lua-version 5.1 path)"
+          busted
 
   helptags:
     name: Help tags
