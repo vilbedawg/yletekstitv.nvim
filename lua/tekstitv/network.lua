@@ -1,14 +1,5 @@
 local M = {}
 
-local settings = {
-    base_url = "https://yle.fi/tekstitv/txt/",
-    user_agent = "tekstitv.nvim",
-}
-
-local function build_url(page, subpage)
-    return string.format("%s%d_%04d.htm", settings.base_url, page, subpage)
-end
-
 -- curl exit codes that mean the site could not be reached at all
 -- (6 host not resolved, 7 connect failed, 28 curl timeout, 124 vim.system timeout).
 local UNREACHABLE = { [6] = true, [7] = true, [28] = true, [124] = true }
@@ -33,9 +24,8 @@ end
 ---@param subpage number
 ---@param callback fun(ok: boolean, html_or_err: string)
 function M.fetch(page, subpage, callback)
-    local url = build_url(page, subpage)
-
-    vim.system({ "curl", "-A", settings.user_agent, "-fsS", url }, { text = true, timeout = 1000 }, function(obj)
+    local url = string.format("https://yle.fi/tekstitv/txt/%d_%04d.htm", page, subpage)
+    vim.system({ "curl", "-A", "tekstitv.nvim", "-fsS", url }, { text = true, timeout = 1000 }, function(obj)
         if obj.code ~= 0 then
             callback(false, error_message(page, subpage, obj))
             return
