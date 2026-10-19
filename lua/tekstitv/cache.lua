@@ -29,9 +29,6 @@ end
 ---@param subpage integer
 ---@param html string
 function M.set(page, subpage, html)
-    if html == "" then
-        return
-    end
     entries[key(page, subpage)] = { html = html, time = os.time() }
 end
 

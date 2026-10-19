@@ -3,7 +3,7 @@ local M = {}
 local cache = require("tekstitv.cache")
 local config = require("tekstitv.config")
 local network = require("tekstitv.network")
-local parser = require("tekstitv.parser")
+local parse = require("tekstitv.parse")
 local uri = require("tekstitv.uri")
 
 local ns = vim.api.nvim_create_namespace("tekstitv")
@@ -11,7 +11,7 @@ local augroup = vim.api.nvim_create_augroup("tekstitv_buffer", { clear = true })
 
 ---@class tekstitv.BufState
 ---@field links tekstitv.Link[]
----@field nav tekstitv.Target[]
+---@field nav tekstitv.Nav
 
 ---@type table<integer, tekstitv.BufState>
 local state = {}
@@ -81,15 +81,15 @@ end
 
 ---@param bufnr integer
 ---@param lines string[]
----@param spans tekstitv.Span[]
-local function draw(bufnr, lines, spans)
+---@param links tekstitv.Link[]
+local function draw(bufnr, lines, links)
     vim.bo[bufnr].modifiable = true
     vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-    for _, span in ipairs(spans) do
-        vim.api.nvim_buf_set_extmark(bufnr, ns, span.row, span.col_start, {
-            end_col = span.col_end,
-            hl_group = span.hl_group,
+    for _, link in ipairs(links) do
+        vim.api.nvim_buf_set_extmark(bufnr, ns, link.row, link.col_start, {
+            end_col = link.col_end,
+            hl_group = "TekstitvLink",
         })
     end
     vim.bo[bufnr].modifiable = false
@@ -107,12 +107,12 @@ function M.load(bufnr, page, subpage)
         end
         local parsed, err
         if ok then
-            parsed, err = parser.parse_html(html_or_err)
+            parsed, err = parse.parse(html_or_err)
         else
             err = html_or_err
         end
         if parsed then
-            draw(bufnr, parsed.lines, parsed.spans)
+            draw(bufnr, parsed.lines, parsed.links)
             state[bufnr] = { links = parsed.links, nav = parsed.nav }
         else
             draw(bufnr, vim.split(err or "unknown error", "\n"), {})
@@ -142,31 +142,12 @@ function M.open(page, subpage)
     vim.cmd.edit(vim.fn.fnameescape(uri.build(page, subpage)))
 end
 
---- Open the next or previous page or subpage that the site's nav bar links to
----@param dir 1|-1
----@param by_subpage boolean
-local function step(dir, by_subpage)
-    local bufnr = vim.api.nvim_get_current_buf()
-    if not state[bufnr] then
-        return
-    end
-
-    local page, subpage = uri.parse(vim.api.nvim_buf_get_name(bufnr))
-    if not page then
-        return
-    end
-
-    for _, target in ipairs(state[bufnr].nav) do
-        local delta
-        if by_subpage then
-            delta = target.page == page and target.subpage - subpage or 0
-        else
-            delta = target.page - page
-        end
-        if delta * dir > 0 then
-            M.open(target.page, target.subpage)
-            return
-        end
+---@param slot "prev_page"|"prev_subpage"|"next_subpage"|"next_page"
+local function follow_nav(slot)
+    local s = state[vim.api.nvim_get_current_buf()]
+    local target = s and s.nav[slot]
+    if target then
+        M.open(target.page, target.subpage)
     end
 end
 
@@ -196,19 +177,19 @@ local function jump_link(dir)
 end
 
 function M.next_page()
-    step(1, false)
+    follow_nav("next_page")
 end
 
 function M.prev_page()
-    step(-1, false)
+    follow_nav("prev_page")
 end
 
 function M.next_subpage()
-    step(1, true)
+    follow_nav("next_subpage")
 end
 
 function M.prev_subpage()
-    step(-1, true)
+    follow_nav("prev_subpage")
 end
 
 function M.next_link()

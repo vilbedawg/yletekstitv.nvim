@@ -27,7 +27,7 @@ local function server(dispatchers)
             id = id + 1
             local result
             if method == "initialize" then
-                -- utf-8 so positions are byte columns, like the parser's link ranges.
+                -- utf-8 so positions are byte columns, like the link ranges from parse.lua.
                 result = { capabilities = { positionEncoding = "utf-8", definitionProvider = true } }
             elseif method == "textDocument/definition" then
                 result = definition(params)
