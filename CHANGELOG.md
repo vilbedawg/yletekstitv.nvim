@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/vilbedawg/yletekstitv.nvim/compare/yletekstitv.nvim-v0.1.0...yletekstitv.nvim-v0.2.0) (2026-10-23)
+
+
+### Features
+
+* show subpage count on statusline ([93b03b1](https://github.com/vilbedawg/yletekstitv.nvim/commit/93b03b15bba696bb0d5e65ff405d940d1dde1f20))
+
+
+### Bug Fixes
+
+* formatting issue ([f49ec3c](https://github.com/vilbedawg/yletekstitv.nvim/commit/f49ec3c7a7df3d77386422c5fb7175689320dc48))
+
 ## 0.1.0 (2026-10-18)
 
 
