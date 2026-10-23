@@ -60,7 +60,11 @@ describe("buffer", function()
         assert.are.equal("tekstitv", vim.bo.filetype)
         assert.is_false(vim.bo.modifiable)
         assert.are.equal(100, vim.b.tekstitv_page)
-        assert.are.equal(" Teksti-TV 100.1", vim.wo.winbar)
+        assert.are.equal(4, vim.b.tekstitv_subpages)
+        assert.are.equal(
+            " Teksti-TV 100 (1/4)",
+            vim.api.nvim_eval_statusline(vim.wo.winbar, { use_winbar = true }).str
+        )
     end)
 
     it("the winbar is local to the page buffer", function()

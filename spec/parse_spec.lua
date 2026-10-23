@@ -75,29 +75,30 @@ describe("parse", function()
             end
         end)
 
-        it("the subpage line follows the page, <font> dropped", function()
+        it("the subpage line is counted", function()
             local page = parse('<pre>x</pre><p>Flersida: 1,<font size="1"> </font><a href="100_0002.htm">2</a></p>')
             assert(page)
-            assert.are.same({ "x", "Flersida 1, 2" }, page.lines)
-            assert.are.same(
-                { { row = 1, col_start = 12, col_end = 13, target = { page = 100, subpage = 2 } } },
-                page.links
-            )
+            assert.are.same({ "x" }, page.lines)
+            assert.are.same({}, page.links)
+            assert.are.equal(2, page.subpages)
         end)
 
-        it("real page fixture: link text is its page number (subpage number on the subpage line)", function()
+        it("a page without a subpage line has one subpage", function()
+            local page = parse("<pre>x</pre>")
+            assert(page)
+            assert.are.equal(1, page.subpages)
+        end)
+
+        it("real page fixture: link text is its page number", function()
             local page, err = parse(read_fixture())
             assert(page, err)
             assert(#page.links > 10, "too few links: " .. #page.links)
             for _, l in ipairs(page.links) do
                 local text = page.lines[l.row + 1]:sub(l.col_start + 1, l.col_end)
                 local p, s = l.target.page, l.target.subpage
-                assert(
-                    tonumber(text) == p or tonumber(text) == s,
-                    ("link text %q does not match target %d.%d"):format(text, p, s)
-                )
+                assert(tonumber(text) == p, ("link text %q does not match target %d.%d"):format(text, p, s))
             end
-            assert.are.equal("Alasivut 1, 2, 3, 4 ", page.lines[#page.lines])
+            assert.are.equal(4, page.subpages)
             for _, line in ipairs(page.lines) do
                 assert(not line:find("[<>]") and not line:find("&%a+;"), "markup leaked: " .. line)
             end

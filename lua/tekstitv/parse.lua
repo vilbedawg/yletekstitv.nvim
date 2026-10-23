@@ -20,6 +20,7 @@ local M = {}
 ---@field lines string[]
 ---@field links tekstitv.Link[]
 ---@field nav tekstitv.Nav
+---@field subpages integer
 
 -- stylua: ignore
 local entities = {
@@ -88,14 +89,14 @@ function M.parse(html)
     end
 
     ---@type tekstitv.Page
-    local page = { lines = {}, links = {}, nav = {} }
+    local page = { lines = {}, links = {}, nav = {}, subpages = 1 }
     for _, line in ipairs(vim.split(body, "\n")) do
         add_line(page, line)
     end
 
-    local label, subpages = html:match("</pre>.-<p>(%a+):%s*(.-)</p>")
-    if label then
-        add_line(page, label .. " " .. subpages:gsub("</?font[^>]*>", ""))
+    local subpages = html:match("</pre>.-<p>%a+:%s*(.-)</p>")
+    if subpages then
+        page.subpages = select(2, subpages:gsub("<[^>]*>", ""):gsub("%d+", ""))
     end
 
     local nav = html:match('<SPAN%s+class="US"%s*>(.-)</SPAN>') or ""

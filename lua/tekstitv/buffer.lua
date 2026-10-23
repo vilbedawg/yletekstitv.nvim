@@ -54,13 +54,13 @@ function M.setup(bufnr, page, subpage)
 
     -- :e! runs BufReadCmd (and so this function) again.
     vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-    local winbar = string.format(" Teksti-TV %d.%d", page, subpage)
     vim.api.nvim_create_autocmd("BufWinEnter", {
         group = augroup,
         buffer = bufnr,
         callback = function()
             -- [0] is :setlocal, so the winbar goes away when the window shows another buffer.
-            vim.wo[0][0].winbar = winbar
+            -- An expression, since the subpage count is only known once the page has loaded.
+            vim.wo[0][0].winbar = " %{v:lua.require'tekstitv'.statusline()}"
         end,
     })
     vim.api.nvim_create_autocmd("BufWipeout", {
@@ -114,6 +114,7 @@ function M.load(bufnr, page, subpage)
         if parsed then
             draw(bufnr, parsed.lines, parsed.links)
             state[bufnr] = { links = parsed.links, nav = parsed.nav }
+            vim.b[bufnr].tekstitv_subpages = parsed.subpages
         else
             draw(bufnr, vim.split(err or "unknown error", "\n"), {})
         end

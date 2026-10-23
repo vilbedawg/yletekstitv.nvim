@@ -32,11 +32,6 @@ Change or disable (`false`) the default keys: >lua
 Keys: `next_page`, `prev_page`, `next_subpage`, `prev_subpage`, `next_link`,
 `prev_link`.
 
-                                                       *tekstitv.statusline()*
-`require("tekstitv").statusline()` returns "Teksti-TV {page}.{subpage}" in
-a page buffer. The numbers are also in *b:tekstitv_page* and
-*b:tekstitv_subpage* .
-
                                                            *hl-TekstitvLink*
 Links are highlighted with `TekstitvLink`, linked to |hl-Identifier|.
 

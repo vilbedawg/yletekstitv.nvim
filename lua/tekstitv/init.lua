@@ -33,7 +33,11 @@ function M.statusline()
     if not page then
         return ""
     end
-    return string.format("Teksti-TV %d.%d", page, vim.b.tekstitv_subpage)
+    local count = vim.b.tekstitv_subpages
+    if count and count > 1 then
+        return string.format("Teksti-TV %d (%d/%d)", page, vim.b.tekstitv_subpage, count)
+    end
+    return string.format("Teksti-TV %d", page)
 end
 
 -- buffer.lua is required inside the callbacks so startup only loads this file and uri.lua.
