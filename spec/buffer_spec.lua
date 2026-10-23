@@ -69,6 +69,25 @@ describe("buffer", function()
         assert.are.equal(" Teksti-TV 100 (1/4)", vim.api.nvim_eval_statusline(vim.wo.winbar, { use_winbar = true }).str)
     end)
 
+    it(":edit uses the cache and :edit! fetches again", function()
+        local system = vim.system
+        local fetches = 0
+        ---@diagnostic disable-next-line: duplicate-set-field
+        vim.system = function(_, _, on_exit)
+            fetches = fetches + 1
+            on_exit({ code = 0, signal = 0, stdout = fixture, stderr = "" })
+        end
+        open_front()
+        vim.cmd.edit()
+        assert.are.equal(0, fetches)
+        vim.cmd("edit!")
+        vim.wait(1000, function()
+            return fetches > 0
+        end)
+        vim.system = system
+        assert.are.equal(1, fetches)
+    end)
+
     it("the winbar is local to the page buffer", function()
         open_front()
         vim.cmd.enew()

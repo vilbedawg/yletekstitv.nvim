@@ -98,7 +98,8 @@ end
 ---@param bufnr integer
 ---@param page integer
 ---@param subpage integer
-function M.load(bufnr, page, subpage)
+---@param refresh? boolean skip the cache and fetch again
+function M.load(bufnr, page, subpage, refresh)
     ---@param ok boolean
     ---@param html_or_err string
     local function render(ok, html_or_err)
@@ -119,7 +120,7 @@ function M.load(bufnr, page, subpage)
         vim.b[bufnr].tekstitv_subpages = parsed.subpages
     end
 
-    local cached = cache.get(page, subpage)
+    local cached = not refresh and cache.get(page, subpage)
     if cached then
         render(true, cached)
         return

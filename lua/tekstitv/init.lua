@@ -54,7 +54,7 @@ function M.register_command()
             end
             local buffer = require("tekstitv.buffer")
             buffer.setup(args.buf, page, subpage or 1)
-            buffer.load(args.buf, page, subpage or 1)
+            buffer.load(args.buf, page, subpage or 1, vim.v.cmdbang == 1)
         end,
     })
 
