@@ -16,7 +16,7 @@ vim.pack.add({ "https://github.com/vilbedawg/yletekstitv.nvim" })
 { "vilbedawg/yletekstitv.nvim" }
 ```
 
-`:Tekstitv 100` opens a page. Follow links with `gd` / `<C-]>`, move between pages with `]p` / `[p`. See `:h tekstitv`.
+`:Tekstitv 100` opens a page. Follow links with `gd` / `<C-]>`, move between pages with `]p` / `[p`. See `:h tekstitv` and [doc/recipes.md](doc/recipes.md) for bookmarks and other ways to get around.
 
 ## Development
 
