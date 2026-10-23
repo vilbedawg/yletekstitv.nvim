@@ -2,6 +2,10 @@
 
 Read [Yle Teksti-TV](https://yle.fi/tekstitv) in Neovim.
 
+<p align="left">
+  <img src="doc/screenshot.png" alt="Teksti-TV page 100 in Neovim" width="320">
+</p>
+
 Requires Neovim 0.10+ and `curl`.
 
 ```lua
