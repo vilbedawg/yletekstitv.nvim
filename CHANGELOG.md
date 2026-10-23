@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/vilbedawg/yletekstitv.nvim/compare/yletekstitv.nvim-v0.2.0...yletekstitv.nvim-v0.3.0) (2026-10-23)
+
+
+### Features
+
+* **buffer:** make :edit! bypass the page cache ([dd7f170](https://github.com/vilbedawg/yletekstitv.nvim/commit/dd7f17072778b84a7aa8462fcb7494cae589a771))
+
 ## [0.2.0](https://github.com/vilbedawg/yletekstitv.nvim/compare/yletekstitv.nvim-v0.1.0...yletekstitv.nvim-v0.2.0) (2026-10-23)
 
 
