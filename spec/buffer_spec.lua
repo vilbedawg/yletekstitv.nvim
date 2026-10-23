@@ -38,19 +38,24 @@ local function wait_for_lsp()
 end
 
 --- Open an uncached page with curl stubbed to fail with `code` / `stderr`.
----@return string first line of the buffer
+---@return string? message passed to vim.notify
+---@return integer? level
 local function open_failing(page, code, stderr)
-    local system = vim.system
+    local system, notify = vim.system, vim.notify
+    local msg, level
     ---@diagnostic disable-next-line: duplicate-set-field
     vim.system = function(_, _, on_exit)
         on_exit({ code = code, signal = 0, stdout = "", stderr = stderr })
     end
+    vim.notify = function(m, l)
+        msg, level = m, l
+    end
     vim.cmd.edit("tekstitv://" .. page .. "/1")
-    vim.system = system
     vim.wait(1000, function()
-        return vim.api.nvim_buf_get_lines(0, 0, 1, false)[1] ~= ""
+        return msg ~= nil
     end)
-    return vim.api.nvim_buf_get_lines(0, 0, 1, false)[1]
+    vim.system, vim.notify = system, notify
+    return msg, level
 end
 
 describe("buffer", function()
@@ -84,7 +89,7 @@ describe("buffer", function()
         assert.are.equal(#links(), #link_marks)
     end)
 
-    it("errors are shown as plain messages, not curl output", function()
+    it("load errors are notified as plain messages", function()
         assert.are.equal(
             "Page 104.1 does not exist.",
             open_failing(104, 22, "curl: (22) The requested URL returned error: 404")
@@ -94,6 +99,8 @@ describe("buffer", function()
             open_failing(107, 56, "curl: (56) The requested URL returned error: 404")
         )
         assert.are.equal("Could not reach yle.fi.", open_failing(105, 6, "curl: (6) Could not resolve host: yle.fi"))
+        assert.are.equal(vim.log.levels.WARN, select(2, open_failing(108, 6, "curl: (6) Could not resolve host")))
+        assert.are.equal(1, vim.api.nvim_buf_line_count(0))
         assert.are.equal(
             "Could not load page 106.1.",
             open_failing(106, 22, "curl: (22) The requested URL returned error: 503")

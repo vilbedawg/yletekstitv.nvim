@@ -7,6 +7,8 @@ Requires Neovim 0.10+ and `curl`. No `setup()` call is needed.
         Open a page, 100 by default. Also `:Tekstitv 100.2`.
         Pages are buffers named `tekstitv://{page}/{subpage}`, so |CTRL-O|
         goes back and |:edit| reloads. Pages are cached for an hour.
+        A page that fails to load is reported as a message and the buffer
+        is left empty; |:edit| tries again.
 
                                                               *tekstitv-links*
 Links are followed with "go to definition": |CTRL-]| or

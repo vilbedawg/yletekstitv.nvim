@@ -105,19 +105,18 @@ function M.load(bufnr, page, subpage)
         if not vim.api.nvim_buf_is_valid(bufnr) then
             return
         end
-        local parsed, err
-        if ok then
-            parsed, err = parse.parse(html_or_err)
-        else
-            err = html_or_err
+        if not ok then
+            vim.notify(html_or_err, vim.log.levels.WARN)
+            return
         end
-        if parsed then
-            draw(bufnr, parsed.lines, parsed.links)
-            state[bufnr] = { links = parsed.links, nav = parsed.nav }
-            vim.b[bufnr].tekstitv_subpages = parsed.subpages
-        else
-            draw(bufnr, vim.split(err or "unknown error", "\n"), {})
+        local parsed, err = parse.parse(html_or_err)
+        if not parsed then
+            vim.notify(err or "unknown error", vim.log.levels.ERROR)
+            return
         end
+        draw(bufnr, parsed.lines, parsed.links)
+        state[bufnr] = { links = parsed.links, nav = parsed.nav }
+        vim.b[bufnr].tekstitv_subpages = parsed.subpages
     end
 
     local cached = cache.get(page, subpage)
